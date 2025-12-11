@@ -28,7 +28,7 @@ export default function Starfield({
 }: StarfieldProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const starsRef = useRef<Star[]>([]);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
   const scrollRef = useRef(0);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
