@@ -35,23 +35,11 @@ export function ScrollReveal({
 }: ScrollRevealProps) {
   const ref = useRef(null);
   
-  // Option 1: Remove the margin option entirely
+  // Remove the margin option entirely
   const isInView = useInView(ref, { 
     once
     // margin removed
   });
-  
-  // Option 2: Use a specific valid margin value
-  // const isInView = useInView(ref, { 
-  //   once, 
-  //   margin: "100px" // Valid CSS margin string
-  // });
-  
-  // Option 3: Use a number (pixels)
-  // const isInView = useInView(ref, { 
-  //   once, 
-  //   margin: 100 // Number in pixels
-  // });
 
   const prefersReducedMotion = useReducedMotion();
 
@@ -92,7 +80,7 @@ export function ScrollReveal({
       transition={{
         duration,
         delay,
-        ease: ANIMATION_CONFIG.ease.smooth as const,
+        ease: ANIMATION_CONFIG.ease.smooth, // Removed "as const"
       }}
     >
       {children}
