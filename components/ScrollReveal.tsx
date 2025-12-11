@@ -34,10 +34,25 @@ export function ScrollReveal({
   className = '',
 }: ScrollRevealProps) {
   const ref = useRef(null);
+  
+  // Option 1: Remove the margin option entirely
   const isInView = useInView(ref, { 
-    once, 
-    margin: ANIMATION_CONFIG.viewportMargin as string
+    once
+    // margin removed
   });
+  
+  // Option 2: Use a specific valid margin value
+  // const isInView = useInView(ref, { 
+  //   once, 
+  //   margin: "100px" // Valid CSS margin string
+  // });
+  
+  // Option 3: Use a number (pixels)
+  // const isInView = useInView(ref, { 
+  //   once, 
+  //   margin: 100 // Number in pixels
+  // });
+
   const prefersReducedMotion = useReducedMotion();
 
   // Get transform based on direction
@@ -77,7 +92,7 @@ export function ScrollReveal({
       transition={{
         duration,
         delay,
-        ease: ANIMATION_CONFIG.ease.smooth,
+        ease: ANIMATION_CONFIG.ease.smooth as const,
       }}
     >
       {children}
