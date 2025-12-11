@@ -29,8 +29,7 @@ export function TextReveal3D({
 }: TextReveal3DProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { 
-    once: true, 
-    margin: ANIMATION_CONFIG.viewportMargin 
+    once: true
   });
   const prefersReducedMotion = useReducedMotion();
 
