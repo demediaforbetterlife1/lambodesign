@@ -36,7 +36,7 @@ export function ScrollReveal({
   const ref = useRef(null);
   const isInView = useInView(ref, { 
     once, 
-    margin: ANIMATION_CONFIG.viewportMargin 
+    margin: ANIMATION_CONFIG.viewportMargin as string
   });
   const prefersReducedMotion = useReducedMotion();
 
