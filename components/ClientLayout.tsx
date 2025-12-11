@@ -53,7 +53,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       filter: 'blur(0px)',
       transition: {
         duration: 0.7,
-        ease: [0.22, 1, 0.36, 1],
+        ease: "easeInOut",
       },
     },
     exit: {
@@ -63,7 +63,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       filter: 'blur(8px)',
       transition: {
         duration: 0.5,
-        ease: [0.22, 1, 0.36, 1],
+        ease:"easeInOut",
       },
     },
   };
