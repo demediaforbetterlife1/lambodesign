@@ -42,7 +42,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
       filter: 'blur(10px)',
       transition: {
         duration: 0.4,
-        ease: [0.22, 1, 0.36, 1],
+        ease: [0.22, 1, 0.36, 1] as const, // Added as const here
       },
     },
   };
@@ -65,7 +65,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
               initial={{ scaleX: 0, originX: 0 }}
               animate={{ scaleX: 1 }}
               exit={{ scaleX: 0, originX: 1 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }} // Added as const here
             />
             
             {/* Center logo flash */}
