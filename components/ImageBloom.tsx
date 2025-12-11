@@ -28,7 +28,7 @@ export function ImageBloom({
   const ref = useRef(null);
   const isInView = useInView(ref, { 
     once: true, 
-    margin: ANIMATION_CONFIG.viewportMargin 
+    margin: ANIMATION_CONFIG.viewportMargin as string
   });
   const prefersReducedMotion = useReducedMotion();
 
