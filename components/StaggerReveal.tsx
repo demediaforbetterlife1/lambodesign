@@ -39,7 +39,6 @@ export function StaggerReveal({
   const ref = useRef(null);
   const isInView = useInView(ref, { 
     once: true
-    // margin removed to fix TypeScript error
   });
   const prefersReducedMotion = useReducedMotion();
 
