@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { useSpring, useMotionValue } from 'framer-motion';
+import { useState, useEffect, useRef, useCallback, RefObject } from 'react';
+import { useSpring, useMotionValue, useScroll, useTransform, MotionValue } from 'framer-motion';
 import { calculateScrollProgress, ANIMATION_CONFIG } from '@/lib/animationUtils';
 
 export interface ScrollState {
@@ -12,8 +12,87 @@ export interface ScrollState {
   scrollY: number;
 }
 
+export interface SectionScrollState {
+  progress: number;
+  isInView: boolean;
+  scrollDirection: 'up' | 'down';
+}
+
 /**
- * Hook to track scroll progress with spring physics
+ * Calculate section-based scroll progress (0-1)
+ * Property 1: Scroll progress calculation is bounded and monotonic
+ * @param scrollY - Current scroll position
+ * @param sectionTop - Section top offset
+ * @param sectionHeight - Section height
+ * @param viewportHeight - Viewport height
+ * @returns Progress value between 0 and 1
+ */
+export function calculateSectionProgress(
+  scrollY: number,
+  sectionTop: number,
+  sectionHeight: number,
+  viewportHeight: number
+): number {
+  // Calculate when section starts entering viewport (bottom of viewport hits top of section)
+  const startPoint = sectionTop - viewportHeight;
+  // Calculate when section is fully scrolled past (top of viewport passes bottom of section)
+  const endPoint = sectionTop + sectionHeight;
+  
+  // Total scroll distance for this section
+  const totalDistance = endPoint - startPoint;
+  
+  if (totalDistance <= 0) return 0;
+  
+  // Current position relative to start
+  const currentPosition = scrollY - startPoint;
+  
+  // Calculate progress and clamp to [0, 1]
+  const progress = currentPosition / totalDistance;
+  return Math.max(0, Math.min(1, progress));
+}
+
+/**
+ * Hook to track scroll progress within a specific section
+ * Requirements: 2.4 - Section-based progress calculation
+ */
+export function useSectionScrollProgress(
+  targetRef: RefObject<HTMLElement>,
+  options: { offset?: [string, string] } = {}
+): SectionScrollState {
+  const [state, setState] = useState<SectionScrollState>({
+    progress: 0,
+    isInView: false,
+    scrollDirection: 'down',
+  });
+  
+  const lastScrollY = useRef(0);
+  
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: options.offset || ['start end', 'end start'],
+  });
+
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on('change', (progress) => {
+      const currentScrollY = typeof window !== 'undefined' ? window.scrollY : 0;
+      const direction: 'up' | 'down' = currentScrollY >= lastScrollY.current ? 'down' : 'up';
+      lastScrollY.current = currentScrollY;
+      
+      setState({
+        progress: Math.max(0, Math.min(1, progress)),
+        isInView: progress > 0 && progress < 1,
+        scrollDirection: direction,
+      });
+    });
+
+    return () => unsubscribe();
+  }, [scrollYProgress]);
+
+  return state;
+}
+
+/**
+ * Hook to track overall page scroll progress with spring physics
  * Requirements: 3.1, 3.3
  */
 export function useScrollProgress() {
