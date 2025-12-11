@@ -38,8 +38,8 @@ export function StaggerReveal({
 }: StaggerRevealProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { 
-    once: true, 
-    margin: ANIMATION_CONFIG.viewportMargin 
+    once: true
+    // margin removed to fix TypeScript error
   });
   const prefersReducedMotion = useReducedMotion();
 
