@@ -66,7 +66,7 @@ export function VehicleCard3D({
       transition: {
         duration: 0.8,
         delay: index * 0.15,
-        ease: [0.22, 1, 0.36, 1],
+        ease: [0.22, 1, 0.36, 1] as const,
       },
     },
   };
@@ -89,17 +89,16 @@ export function VehicleCard3D({
         style={{
           background: 'rgba(0, 0, 0, 0.6)',
           backdropFilter: 'blur(20px)',
-          border: `2px solid ${cardColor}30`,
+          border: `2px solid ${isHovered ? cardColor : cardColor + '30'}`,
           transformStyle: 'preserve-3d',
+          boxShadow: isHovered
+            ? `0 0 60px ${cardColor}40, 0 25px 50px rgba(0,0,0,0.5)`
+            : `0 0 20px ${cardColor}20`,
         }}
         animate={{
           rotateX: isHovered ? -mousePos.y * 10 : 0,
           rotateY: isHovered ? mousePos.x * 10 : 0,
           scale: isHovered ? 1.05 : 1,
-          borderColor: isHovered ? cardColor : `${cardColor}30`,
-          boxShadow: isHovered
-            ? `0 0 60px ${cardColor}40, 0 25px 50px rgba(0,0,0,0.5)`
-            : `0 0 20px ${cardColor}20`,
         }}
         transition={{ duration: 0.3 }}
       >
