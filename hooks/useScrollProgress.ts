@@ -56,8 +56,8 @@ export function calculateSectionProgress(
  * Requirements: 2.4 - Section-based progress calculation
  */
 export function useSectionScrollProgress(
-  targetRef: RefObject<HTMLElement>,
-  options: { offset?: [string, string] } = {}
+  targetRef: RefObject<HTMLElement | null>,
+  options: { offset?: ['start end' | 'end start' | 'start start' | 'end end', 'start end' | 'end start' | 'start start' | 'end end'] } = {}
 ): SectionScrollState {
   const [state, setState] = useState<SectionScrollState>({
     progress: 0,
@@ -69,22 +69,23 @@ export function useSectionScrollProgress(
   
   const { scrollYProgress } = useScroll({
     target: targetRef,
-    offset: options.offset || ['start end', 'end start'],
+    offset: options.offset ?? ['start end', 'end start'],
   });
 
   useEffect(() => {
-    const unsubscribe = scrollYProgress.on('change', (progress) => {
+    const handleChange = (latest: number) => {
       const currentScrollY = typeof window !== 'undefined' ? window.scrollY : 0;
       const direction: 'up' | 'down' = currentScrollY >= lastScrollY.current ? 'down' : 'up';
       lastScrollY.current = currentScrollY;
       
       setState({
-        progress: Math.max(0, Math.min(1, progress)),
-        isInView: progress > 0 && progress < 1,
+        progress: Math.max(0, Math.min(1, latest)),
+        isInView: latest > 0 && latest < 1,
         scrollDirection: direction,
       });
-    });
+    };
 
+    const unsubscribe = scrollYProgress.on('change', handleChange);
     return () => unsubscribe();
   }, [scrollYProgress]);
 
