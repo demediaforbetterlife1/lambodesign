@@ -53,7 +53,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       filter: 'blur(0px)',
       transition: {
         duration: 0.7,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
       },
     },
     exit: {
@@ -63,7 +63,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
       filter: 'blur(8px)',
       transition: {
         duration: 0.5,
-        ease:"easeInOut",
+        ease: "easeInOut" as const,
       },
     },
   };
@@ -74,11 +74,11 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     hidden: { scaleY: 0 },
     visible: { 
       scaleY: 1,
-      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const }
     },
     exit: { 
       scaleY: 0,
-      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.2 }
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as const, delay: 0.2 }
     }
   };
 
