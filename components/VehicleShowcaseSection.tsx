@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useRef, useMemo, useCallback } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Image from 'next/image';
-import VehicleDetailModal from './VehicleDetailModal';
 import { FEATURED_LAMBOS, VehicleData } from '@/lib/constants';
 
 const NEON = {
@@ -15,6 +14,7 @@ const NEON = {
 
 export interface VehicleShowcaseSectionProps {
   vehicles?: VehicleData[];
+  onVehicleSelect?: (vehicle: VehicleData) => void;
 }
 
 /**
@@ -22,9 +22,8 @@ export interface VehicleShowcaseSectionProps {
  */
 export function VehicleShowcaseSection({
   vehicles = FEATURED_LAMBOS,
+  onVehicleSelect,
 }: VehicleShowcaseSectionProps) {
-  const [selectedVehicle, setSelectedVehicle] = useState<VehicleData | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -35,17 +34,6 @@ export function VehicleShowcaseSection({
 
   const headerY = useTransform(scrollYProgress, [0, 0.3], [80, 0]);
   const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
-
-  // Memoized handlers to prevent re-renders
-  const handleVehicleSelect = useCallback((vehicle: VehicleData) => {
-    setSelectedVehicle(vehicle);
-    setIsModalOpen(true);
-  }, []);
-
-  const handleCloseModal = useCallback(() => {
-    setIsModalOpen(false);
-    setTimeout(() => setSelectedVehicle(null), 300);
-  }, []);
 
   const cardColors = [NEON.purple, NEON.cyan, NEON.gold];
 
@@ -243,7 +231,7 @@ export function VehicleShowcaseSection({
                   delay: index * 0.15,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                onClick={() => handleVehicleSelect(vehicle)}
+                onClick={() => onVehicleSelect?.(vehicle)}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
@@ -372,9 +360,6 @@ export function VehicleShowcaseSection({
           boxShadow: `0 0 30px ${NEON.cyan}`,
         }}
       />
-
-      {/* Modal */}
-      <VehicleDetailModal vehicle={selectedVehicle} isOpen={isModalOpen} onClose={handleCloseModal} />
     </section>
   );
 }

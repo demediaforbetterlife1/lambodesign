@@ -7,7 +7,9 @@ import { HeroScrollSection } from './HeroScrollSection';
 import { VehicleShowcaseSection } from './VehicleShowcaseSection';
 import { LegacySection } from './LegacySection';
 import { ContactSection } from './ContactSection';
+import VehicleDetailModal from './VehicleDetailModal';
 import { useActiveSection } from '@/hooks/useActiveSection';
+import { VehicleData } from '@/lib/constants';
 
 const NEON = {
   purple: '#8b5cf6',
@@ -29,6 +31,8 @@ const SECTIONS: SectionConfig[] = [
 export function FuturisticScrollPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isClient, setIsClient] = useState(false);
+  const [selectedVehicle, setSelectedVehicle] = useState<VehicleData | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { activeIndex } = useActiveSection({
     sectionIds: SECTIONS.map((s) => s.id),
@@ -54,6 +58,16 @@ export function FuturisticScrollPage() {
     if (vehiclesSection) {
       vehiclesSection.scrollIntoView({ behavior: 'smooth' });
     }
+  }, []);
+
+  const handleVehicleSelect = useCallback((vehicle: VehicleData) => {
+    setSelectedVehicle(vehicle);
+    setIsModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setTimeout(() => setSelectedVehicle(null), 300);
   }, []);
 
   if (!isClient) {
@@ -87,9 +101,16 @@ export function FuturisticScrollPage() {
 
       {/* Sections */}
       <HeroScrollSection onScrollToNext={scrollToNext} />
-      <VehicleShowcaseSection />
+      <VehicleShowcaseSection onVehicleSelect={handleVehicleSelect} />
       <LegacySection />
       <ContactSection />
+
+      {/* Modal rendered at root level to avoid overflow clipping */}
+      <VehicleDetailModal 
+        vehicle={selectedVehicle} 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal} 
+      />
     </div>
   );
 }

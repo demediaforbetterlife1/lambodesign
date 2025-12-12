@@ -35,7 +35,7 @@ export default function GalleryPage() {
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
-      {/* Background */}
+      {/* Background - OPTIMIZED */}
       <div className="fixed inset-0 z-0">
         <div className="absolute inset-0" style={{
           background: `
@@ -45,18 +45,14 @@ export default function GalleryPage() {
           `
         }} />
         
-        {/* Animated orbs */}
-        <motion.div
+        {/* Static orbs - no animation for performance */}
+        <div
           className="absolute w-[600px] h-[600px] rounded-full blur-[120px]"
           style={{ background: `${NEON.purple}40`, left: '-10%', top: '20%' }}
-          animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
-          transition={{ duration: 15, repeat: Infinity }}
         />
-        <motion.div
+        <div
           className="absolute w-[500px] h-[500px] rounded-full blur-[100px]"
           style={{ background: `${NEON.cyan}30`, right: '-5%', bottom: '30%' }}
-          animate={{ x: [0, -40, 0], y: [0, -30, 0] }}
-          transition={{ duration: 12, repeat: Infinity }}
         />
       </div>
 
@@ -206,25 +202,22 @@ export default function GalleryPage() {
                         </div>
                       </div>
 
-                      {/* Hover overlay */}
-                      <motion.div
-                        className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      {/* Hover overlay - pointer-events-none to allow clicks through */}
+                      <div
+                        className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                         style={{ background: 'rgba(0,0,0,0.7)' }}
                       >
-                        <motion.span
+                        <span
                           className="px-8 py-4 rounded-full font-bold uppercase tracking-wider"
                           style={{
                             border: `2px solid ${NEON.gold}`,
                             color: NEON.gold,
                             boxShadow: `0 0 30px ${NEON.gold}50`
                           }}
-                          initial={{ scale: 0.8, opacity: 0 }}
-                          whileHover={{ scale: 1 }}
-                          animate={{ scale: 1, opacity: 1 }}
                         >
                           View Details
-                        </motion.span>
-                      </motion.div>
+                        </span>
+                      </div>
                     </motion.div>
                   </NeonReveal>
                 </StaggerItem>
