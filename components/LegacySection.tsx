@@ -39,24 +39,22 @@ export function LegacySection() {
   const headerY = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
   const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
 
-  // Pre-generate stars
+  // Pre-generate stars - REDUCED for performance (15 instead of 50)
   const stars = useMemo(() => 
-    Array.from({ length: 50 }, (_, i) => ({
+    Array.from({ length: 15 }, (_, i) => ({
       id: i,
-      size: 1 + Math.random() * 2,
+      size: 1 + (i % 3),
       color: ['#fff', NEON.cyan, NEON.purple, NEON.gold][i % 4],
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-      delay: Math.random() * 3,
-      duration: 2 + Math.random() * 2,
+      left: `${(i * 7) % 100}%`,
+      top: `${(i * 6) % 100}%`,
     })), []
   );
 
-  // Planets for this section
+  // Static planets - no animation for performance
   const planets = useMemo(() => [
-    { size: 100, color: NEON.gold, right: '5%', top: '10%', glow: 50, duration: 18 },
-    { size: 70, color: NEON.purple, left: '8%', top: '30%', glow: 35, duration: 22 },
-    { size: 50, color: NEON.cyan, right: '15%', bottom: '25%', glow: 25, duration: 15 },
+    { size: 100, color: NEON.gold, right: '5%', top: '10%', glow: 50 },
+    { size: 70, color: NEON.purple, left: '8%', top: '30%', glow: 35 },
+    { size: 50, color: NEON.cyan, right: '15%', bottom: '25%', glow: 25 },
   ], []);
 
 
@@ -79,75 +77,61 @@ export function LegacySection() {
           }}
         />
 
-        {/* Animated Stars */}
+        {/* Static Stars - no animation for performance */}
         {stars.map((star) => (
           <div
             key={star.id}
-            className="absolute rounded-full animate-twinkle"
+            className="absolute rounded-full"
             style={{
               width: star.size,
               height: star.size,
               background: star.color,
               left: star.left,
               top: star.top,
-              boxShadow: `0 0 ${star.size * 3}px ${star.color}`,
-              animationDelay: `${star.delay}s`,
-              animationDuration: `${star.duration}s`,
+              boxShadow: `0 0 ${star.size * 2}px ${star.color}`,
+              opacity: 0.7,
             }}
           />
         ))}
 
-        {/* Neon Animated Planets */}
+        {/* Static Planets - no animation for performance */}
         {planets.map((planet, i) => (
-          <motion.div
+          <div
             key={i}
             className="absolute rounded-full"
             style={{
               width: planet.size,
               height: planet.size,
               background: `radial-gradient(circle at 30% 30%, ${planet.color}60, ${planet.color}20 50%, transparent 70%)`,
-              boxShadow: `
-                0 0 ${planet.glow}px ${planet.color}80,
-                0 0 ${planet.glow * 2}px ${planet.color}40,
-                inset 0 0 ${planet.glow / 2}px ${planet.color}60
-              `,
+              boxShadow: `0 0 ${planet.glow}px ${planet.color}80, 0 0 ${planet.glow * 2}px ${planet.color}40`,
               left: planet.left,
               right: planet.right,
               top: planet.top,
               bottom: planet.bottom,
             }}
-            animate={{
-              y: [0, -20, 0],
-              scale: [1, 1.08, 1],
-              boxShadow: [
-                `0 0 ${planet.glow}px ${planet.color}80, 0 0 ${planet.glow * 2}px ${planet.color}40`,
-                `0 0 ${planet.glow * 1.5}px ${planet.color}95, 0 0 ${planet.glow * 3}px ${planet.color}60`,
-                `0 0 ${planet.glow}px ${planet.color}80, 0 0 ${planet.glow * 2}px ${planet.color}40`,
-              ],
-            }}
-            transition={{ duration: planet.duration, repeat: Infinity, ease: 'easeInOut' }}
           />
         ))}
 
-        {/* Nebula clouds */}
+        {/* Static Nebula clouds - no animation */}
         <div
-          className="absolute w-[700px] h-[700px] rounded-full animate-pulse-slow"
+          className="absolute w-[700px] h-[700px] rounded-full"
           style={{
             background: `radial-gradient(circle, ${NEON.purple}18 0%, transparent 70%)`,
             filter: 'blur(100px)',
             left: '50%',
             top: '30%',
             transform: 'translate(-50%, -50%)',
+            opacity: 0.5,
           }}
         />
         <div
-          className="absolute w-[500px] h-[500px] rounded-full animate-pulse-slow"
+          className="absolute w-[500px] h-[500px] rounded-full"
           style={{
             background: `radial-gradient(circle, ${NEON.gold}12 0%, transparent 70%)`,
             filter: 'blur(80px)',
             right: '-10%',
             bottom: '10%',
-            animationDelay: '5s',
+            opacity: 0.5,
           }}
         />
       </div>
@@ -173,24 +157,16 @@ export function LegacySection() {
         </motion.span>
 
         <h2 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8">
-          <motion.span
+          <span
             style={{
               background: `linear-gradient(135deg, #fff, ${NEON.purple}, ${NEON.cyan})`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               filter: `drop-shadow(0 0 30px ${NEON.purple}60)`,
             }}
-            animate={{
-              filter: [
-                `drop-shadow(0 0 30px ${NEON.purple}60)`,
-                `drop-shadow(0 0 50px ${NEON.cyan}80)`,
-                `drop-shadow(0 0 30px ${NEON.purple}60)`,
-              ],
-            }}
-            transition={{ duration: 4, repeat: Infinity }}
           >
             OUR LEGACY
-          </motion.span>
+          </span>
         </h2>
 
         <p className="text-xl text-white/60 max-w-2xl mx-auto">

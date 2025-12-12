@@ -244,20 +244,18 @@ export function ScrollProgress() {
   );
 }
 
-// Rotating border animation
+// Static gradient border (no animation for performance)
 export function RotatingBorder({ children, className = '' }: { 
   children: ReactNode; 
   className?: string;
 }) {
   return (
     <div className={`relative p-[3px] rounded-2xl overflow-hidden ${className}`}>
-      <motion.div
+      <div
         className="absolute inset-0"
         style={{
           background: `conic-gradient(from 0deg, ${NEON.purple}, ${NEON.cyan}, ${NEON.gold}, ${NEON.pink}, ${NEON.purple})`,
         }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
       />
       <div className="relative bg-black rounded-2xl">
         {children}
@@ -534,51 +532,31 @@ export function MorphSection({
   );
 }
 
-// Floating animation (continuous)
-export function Float({ children, duration = 3, distance = 10 }: { 
+// Static wrapper (animation disabled for performance)
+export function Float({ children }: { 
   children: ReactNode; 
   duration?: number;
   distance?: number;
 }) {
   return (
-    <motion.div
-      animate={{ 
-        y: [-distance, distance, -distance],
-      }}
-      transition={{ 
-        duration,
-        repeat: Infinity,
-        ease: 'easeInOut',
-      }}
-    >
+    <div>
       {children}
-    </motion.div>
+    </div>
   );
 }
 
-// Pulse glow effect
+// Static glow effect (animation disabled for performance)
 export function PulseGlow({ children, color = NEON.gold }: { 
   children: ReactNode; 
   color?: string;
 }) {
   return (
-    <motion.div className="relative">
-      <motion.div
+    <div className="relative">
+      <div
         className="absolute inset-0 rounded-lg pointer-events-none"
-        animate={{
-          boxShadow: [
-            `0 0 20px ${color}40`,
-            `0 0 40px ${color}60`,
-            `0 0 20px ${color}40`,
-          ],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          ease: 'easeInOut',
-        }}
+        style={{ boxShadow: `0 0 30px ${color}50` }}
       />
       {children}
-    </motion.div>
+    </div>
   );
 }

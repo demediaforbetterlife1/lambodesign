@@ -39,24 +39,22 @@ export function ContactSection() {
   const headerY = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
   const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [0, 1]);
 
-  // Pre-generate stars
+  // Pre-generate stars - REDUCED for performance (12 instead of 45)
   const stars = useMemo(() => 
-    Array.from({ length: 45 }, (_, i) => ({
+    Array.from({ length: 12 }, (_, i) => ({
       id: i,
-      size: 1 + Math.random() * 2,
+      size: 1 + (i % 3),
       color: ['#fff', NEON.cyan, NEON.purple, NEON.pink][i % 4],
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-      delay: Math.random() * 3,
-      duration: 2 + Math.random() * 2,
+      left: `${(i * 8) % 100}%`,
+      top: `${(i * 7) % 100}%`,
     })), []
   );
 
-  // Planets for this section
+  // Static planets - no animation for performance
   const planets = useMemo(() => [
-    { size: 90, color: NEON.cyan, left: '5%', bottom: '15%', glow: 45, duration: 20 },
-    { size: 60, color: NEON.pink, right: '10%', top: '20%', glow: 30, duration: 16 },
-    { size: 45, color: NEON.gold, left: '20%', top: '15%', glow: 22, duration: 24 },
+    { size: 90, color: NEON.cyan, left: '5%', bottom: '15%', glow: 45 },
+    { size: 60, color: NEON.pink, right: '10%', top: '20%', glow: 30 },
+    { size: 45, color: NEON.gold, left: '20%', top: '15%', glow: 22 },
   ], []);
 
 
@@ -79,74 +77,60 @@ export function ContactSection() {
           }}
         />
 
-        {/* Animated Stars */}
+        {/* Static Stars - no animation for performance */}
         {stars.map((star) => (
           <div
             key={star.id}
-            className="absolute rounded-full animate-twinkle"
+            className="absolute rounded-full"
             style={{
               width: star.size,
               height: star.size,
               background: star.color,
               left: star.left,
               top: star.top,
-              boxShadow: `0 0 ${star.size * 3}px ${star.color}`,
-              animationDelay: `${star.delay}s`,
-              animationDuration: `${star.duration}s`,
+              boxShadow: `0 0 ${star.size * 2}px ${star.color}`,
+              opacity: 0.7,
             }}
           />
         ))}
 
-        {/* Neon Animated Planets */}
+        {/* Static Planets - no animation for performance */}
         {planets.map((planet, i) => (
-          <motion.div
+          <div
             key={i}
             className="absolute rounded-full"
             style={{
               width: planet.size,
               height: planet.size,
               background: `radial-gradient(circle at 30% 30%, ${planet.color}60, ${planet.color}20 50%, transparent 70%)`,
-              boxShadow: `
-                0 0 ${planet.glow}px ${planet.color}80,
-                0 0 ${planet.glow * 2}px ${planet.color}40,
-                inset 0 0 ${planet.glow / 2}px ${planet.color}60
-              `,
+              boxShadow: `0 0 ${planet.glow}px ${planet.color}80, 0 0 ${planet.glow * 2}px ${planet.color}40`,
               left: planet.left,
               right: planet.right,
               top: planet.top,
               bottom: planet.bottom,
             }}
-            animate={{
-              y: [0, -15, 0],
-              scale: [1, 1.06, 1],
-              boxShadow: [
-                `0 0 ${planet.glow}px ${planet.color}80, 0 0 ${planet.glow * 2}px ${planet.color}40`,
-                `0 0 ${planet.glow * 1.5}px ${planet.color}95, 0 0 ${planet.glow * 3}px ${planet.color}60`,
-                `0 0 ${planet.glow}px ${planet.color}80, 0 0 ${planet.glow * 2}px ${planet.color}40`,
-              ],
-            }}
-            transition={{ duration: planet.duration, repeat: Infinity, ease: 'easeInOut' }}
           />
         ))}
 
-        {/* Nebula clouds */}
+        {/* Static Nebula clouds - no animation */}
         <div
-          className="absolute w-[600px] h-[600px] rounded-full animate-pulse-slow"
+          className="absolute w-[600px] h-[600px] rounded-full"
           style={{
             background: `radial-gradient(circle, ${NEON.cyan}18 0%, transparent 70%)`,
             filter: 'blur(100px)',
             left: '20%',
             bottom: '10%',
+            opacity: 0.5,
           }}
         />
         <div
-          className="absolute w-[500px] h-[500px] rounded-full animate-pulse-slow"
+          className="absolute w-[500px] h-[500px] rounded-full"
           style={{
             background: `radial-gradient(circle, ${NEON.purple}15 0%, transparent 70%)`,
             filter: 'blur(80px)',
             right: '15%',
             top: '20%',
-            animationDelay: '4s',
+            opacity: 0.5,
           }}
         />
 
@@ -180,24 +164,16 @@ export function ContactSection() {
         </motion.span>
 
         <h2 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8">
-          <motion.span
+          <span
             style={{
               background: `linear-gradient(135deg, #fff, ${NEON.cyan}, ${NEON.purple})`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               filter: `drop-shadow(0 0 30px ${NEON.cyan}60)`,
             }}
-            animate={{
-              filter: [
-                `drop-shadow(0 0 30px ${NEON.cyan}60)`,
-                `drop-shadow(0 0 50px ${NEON.pink}80)`,
-                `drop-shadow(0 0 30px ${NEON.cyan}60)`,
-              ],
-            }}
-            transition={{ duration: 4, repeat: Infinity }}
           >
             CONTACT US
-          </motion.span>
+          </span>
         </h2>
 
         <p className="text-xl text-white/60 max-w-2xl mx-auto">
@@ -292,7 +268,7 @@ export function ContactSection() {
 
             {/* CTA Button */}
             <motion.button
-              className="mt-12 px-12 py-5 rounded-full font-bold uppercase tracking-widest text-black relative overflow-hidden"
+              className="mt-12 px-12 py-5 rounded-full font-bold uppercase tracking-widest text-black relative overflow-hidden transition-all duration-300 hover:scale-105"
               style={{
                 background: `linear-gradient(135deg, ${NEON.gold}, #B8860B)`,
                 boxShadow: `0 0 50px ${NEON.gold}60`,
@@ -301,15 +277,8 @@ export function ContactSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.8 }}
-              whileHover={{ scale: 1.05, boxShadow: `0 0 80px ${NEON.gold}80` }}
               whileTap={{ scale: 0.95 }}
             >
-              <motion.span
-                className="absolute inset-0"
-                style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)' }}
-                animate={{ x: ['-100%', '100%'] }}
-                transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
-              />
               <span className="relative z-10">Send Message</span>
             </motion.button>
           </motion.div>
@@ -371,15 +340,13 @@ export function ContactSection() {
         </div>
       </motion.div>
 
-      {/* Bottom neon line */}
-      <motion.div
+      {/* Bottom neon line - static */}
+      <div
         className="absolute bottom-0 left-0 right-0 h-[4px]"
         style={{
           background: `linear-gradient(90deg, ${NEON.purple}, ${NEON.cyan}, ${NEON.gold}, ${NEON.pink}, ${NEON.cyan}, ${NEON.purple})`,
           boxShadow: `0 0 40px ${NEON.cyan}, 0 0 80px ${NEON.purple}`,
         }}
-        animate={{ opacity: [0.7, 1, 0.7] }}
-        transition={{ duration: 3, repeat: Infinity }}
       />
     </section>
   );

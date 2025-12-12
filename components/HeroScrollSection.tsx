@@ -39,16 +39,14 @@ export function HeroScrollSection({
     setIsClient(true);
   }, []);
 
-  // Pre-generate static particle positions (only 12 particles)
+  // Pre-generate static particle positions (only 8 particles for performance)
   const particles = useMemo(() => 
-    Array.from({ length: 12 }, (_, i) => ({
+    Array.from({ length: 8 }, (_, i) => ({
       id: i,
       size: 2 + (i % 3) * 2,
       color: [NEON.gold, NEON.cyan, NEON.purple][i % 3],
-      left: `${10 + (i * 7) % 80}%`,
-      top: `${10 + (i * 8) % 80}%`,
-      duration: 4 + (i % 3) * 2,
-      delay: i * 0.3,
+      left: `${10 + (i * 10) % 80}%`,
+      top: `${10 + (i * 11) % 80}%`,
     })), []
   );
 
@@ -71,26 +69,25 @@ export function HeroScrollSection({
         }}
       />
 
-      {/* Static Orbs with CSS animations instead of Framer Motion */}
+      {/* Static Orbs - no animation for performance */}
       <div
-        className="absolute w-[600px] h-[600px] rounded-full animate-pulse-slow"
+        className="absolute w-[600px] h-[600px] rounded-full"
         style={{
           background: `radial-gradient(circle, ${NEON.purple}40 0%, transparent 70%)`,
           filter: 'blur(100px)',
           left: '-15%',
           top: '5%',
-          willChange: 'transform',
+          opacity: 0.6,
         }}
       />
       <div
-        className="absolute w-[500px] h-[500px] rounded-full animate-pulse-slow"
+        className="absolute w-[500px] h-[500px] rounded-full"
         style={{
           background: `radial-gradient(circle, ${NEON.cyan}35 0%, transparent 70%)`,
           filter: 'blur(80px)',
           right: '-10%',
           bottom: '10%',
-          willChange: 'transform',
-          animationDelay: '2s',
+          opacity: 0.6,
         }}
       />
 
@@ -108,11 +105,11 @@ export function HeroScrollSection({
         />
       ))}
 
-      {/* Minimal Particles - CSS animation */}
+      {/* Static Particles - no animation for performance */}
       {isClient && particles.map((p) => (
         <div
           key={p.id}
-          className="absolute rounded-full animate-float"
+          className="absolute rounded-full"
           style={{
             width: p.size,
             height: p.size,
@@ -120,9 +117,7 @@ export function HeroScrollSection({
             left: p.left,
             top: p.top,
             boxShadow: `0 0 10px ${p.color}`,
-            animationDuration: `${p.duration}s`,
-            animationDelay: `${p.delay}s`,
-            willChange: 'transform, opacity',
+            opacity: 0.7,
           }}
         />
       ))}
