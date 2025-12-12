@@ -10,6 +10,7 @@ const NEON = {
   purple: '#8b5cf6',
   cyan: '#0ea5e9',
   gold: '#D4AF37',
+  pink: '#ec4899',
 };
 
 export interface VehicleShowcaseSectionProps {
@@ -17,7 +18,7 @@ export interface VehicleShowcaseSectionProps {
 }
 
 /**
- * Vehicle showcase section - OPTIMIZED for performance
+ * Vehicle showcase section with space background, stars, and neon planets
  */
 export function VehicleShowcaseSection({
   vehicles = FEATURED_LAMBOS,
@@ -47,17 +48,26 @@ export function VehicleShowcaseSection({
 
   const cardColors = [NEON.purple, NEON.cyan, NEON.gold];
 
-  // Pre-generate stars (reduced to 15)
+  // Pre-generate stars
   const stars = useMemo(() => 
-    Array.from({ length: 15 }, (_, i) => ({
+    Array.from({ length: 60 }, (_, i) => ({
       id: i,
-      size: 1 + (i % 3),
-      color: ['#fff', NEON.cyan, NEON.purple][i % 3],
-      left: `${(i * 6.5) % 100}%`,
-      top: `${(i * 7.3) % 100}%`,
-      delay: i * 0.2,
+      size: 1 + Math.random() * 2,
+      color: ['#fff', NEON.cyan, NEON.purple, NEON.gold][i % 4],
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      delay: Math.random() * 3,
+      duration: 2 + Math.random() * 2,
     })), []
   );
+
+  // Pre-generate planets
+  const planets = useMemo(() => [
+    { size: 120, color: NEON.purple, left: '5%', top: '15%', glow: 60, duration: 20 },
+    { size: 80, color: NEON.cyan, right: '8%', top: '25%', glow: 40, duration: 15 },
+    { size: 60, color: NEON.pink, left: '15%', bottom: '20%', glow: 30, duration: 25 },
+    { size: 40, color: NEON.gold, right: '20%', bottom: '30%', glow: 20, duration: 18 },
+  ], []);
 
 
   return (
@@ -66,43 +76,21 @@ export function VehicleShowcaseSection({
       id="vehicles"
       className="relative min-h-screen py-32 px-6 overflow-hidden snap-start"
     >
-      {/* Static Background */}
+      {/* Deep Space Background */}
       <div className="absolute inset-0">
         <div
           className="absolute inset-0"
           style={{
             background: `
-              radial-gradient(ellipse at 20% 20%, ${NEON.purple}20 0%, transparent 50%),
-              radial-gradient(ellipse at 80% 80%, ${NEON.cyan}15 0%, transparent 50%),
-              linear-gradient(180deg, #000 0%, #050510 30%, #0a0a1a 50%, #050510 70%, #000 100%)
+              radial-gradient(ellipse at 20% 20%, ${NEON.purple}15 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 80%, ${NEON.cyan}12 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 50%, ${NEON.gold}08 0%, transparent 60%),
+              linear-gradient(180deg, #000 0%, #030308 20%, #050510 50%, #030308 80%, #000 100%)
             `,
           }}
         />
 
-        {/* Static nebula orbs with CSS animation */}
-        <div
-          className="absolute w-[600px] h-[600px] rounded-full animate-pulse-slow"
-          style={{
-            background: `${NEON.purple}25`,
-            filter: 'blur(120px)',
-            left: '-10%',
-            top: '15%',
-            willChange: 'opacity',
-          }}
-        />
-        <div
-          className="absolute w-[500px] h-[500px] rounded-full animate-pulse-slow"
-          style={{
-            background: `${NEON.cyan}20`,
-            filter: 'blur(100px)',
-            right: '-5%',
-            bottom: '25%',
-            animationDelay: '3s',
-            willChange: 'opacity',
-          }}
-        />
-
-        {/* Stars with CSS animation */}
+        {/* Animated Stars */}
         {stars.map((star) => (
           <div
             key={star.id}
@@ -113,21 +101,93 @@ export function VehicleShowcaseSection({
               background: star.color,
               left: star.left,
               top: star.top,
-              boxShadow: `0 0 6px ${star.color}`,
+              boxShadow: `0 0 ${star.size * 3}px ${star.color}`,
               animationDelay: `${star.delay}s`,
+              animationDuration: `${star.duration}s`,
             }}
           />
         ))}
 
-        {/* Static grid */}
+        {/* Neon Animated Planets */}
+        {planets.map((planet, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              width: planet.size,
+              height: planet.size,
+              background: `radial-gradient(circle at 30% 30%, ${planet.color}60, ${planet.color}20 50%, transparent 70%)`,
+              boxShadow: `
+                0 0 ${planet.glow}px ${planet.color}80,
+                0 0 ${planet.glow * 2}px ${planet.color}40,
+                inset 0 0 ${planet.glow / 2}px ${planet.color}60
+              `,
+              left: planet.left,
+              right: planet.right,
+              top: planet.top,
+              bottom: planet.bottom,
+            }}
+            animate={{
+              y: [0, -15, 0],
+              scale: [1, 1.05, 1],
+              boxShadow: [
+                `0 0 ${planet.glow}px ${planet.color}80, 0 0 ${planet.glow * 2}px ${planet.color}40, inset 0 0 ${planet.glow / 2}px ${planet.color}60`,
+                `0 0 ${planet.glow * 1.5}px ${planet.color}90, 0 0 ${planet.glow * 3}px ${planet.color}50, inset 0 0 ${planet.glow}px ${planet.color}70`,
+                `0 0 ${planet.glow}px ${planet.color}80, 0 0 ${planet.glow * 2}px ${planet.color}40, inset 0 0 ${planet.glow / 2}px ${planet.color}60`,
+              ],
+            }}
+            transition={{
+              duration: planet.duration,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          >
+            {/* Planet ring */}
+            {i === 0 && (
+              <div
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2"
+                style={{
+                  width: planet.size * 1.6,
+                  height: planet.size * 0.4,
+                  borderColor: `${planet.color}40`,
+                  transform: 'translate(-50%, -50%) rotateX(70deg)',
+                  boxShadow: `0 0 20px ${planet.color}30`,
+                }}
+              />
+            )}
+          </motion.div>
+        ))}
+
+        {/* Nebula clouds */}
+        <div
+          className="absolute w-[800px] h-[800px] rounded-full animate-pulse-slow"
+          style={{
+            background: `radial-gradient(circle, ${NEON.purple}20 0%, transparent 70%)`,
+            filter: 'blur(100px)',
+            left: '-20%',
+            top: '10%',
+          }}
+        />
+        <div
+          className="absolute w-[600px] h-[600px] rounded-full animate-pulse-slow"
+          style={{
+            background: `radial-gradient(circle, ${NEON.cyan}15 0%, transparent 70%)`,
+            filter: 'blur(80px)',
+            right: '-15%',
+            bottom: '20%',
+            animationDelay: '4s',
+          }}
+        />
+
+        {/* Grid overlay */}
         <div
           className="absolute inset-0 opacity-5"
           style={{
             backgroundImage: `
-              linear-gradient(${NEON.purple}30 1px, transparent 1px),
-              linear-gradient(90deg, ${NEON.purple}30 1px, transparent 1px)
+              linear-gradient(${NEON.cyan}30 1px, transparent 1px),
+              linear-gradient(90deg, ${NEON.cyan}30 1px, transparent 1px)
             `,
-            backgroundSize: '100px 100px',
+            backgroundSize: '80px 80px',
           }}
         />
       </div>
@@ -138,31 +198,43 @@ export function VehicleShowcaseSection({
         className="relative z-10 max-w-7xl mx-auto text-center mb-20"
         style={{ y: headerY, opacity: headerOpacity }}
       >
-        <span
+        <motion.span
           className="inline-block px-8 py-3 rounded-full text-sm uppercase tracking-[0.4em] font-semibold mb-8"
           style={{
-            background: `${NEON.purple}20`,
+            background: `linear-gradient(135deg, ${NEON.purple}30, ${NEON.cyan}20)`,
             border: `2px solid ${NEON.purple}60`,
             color: NEON.purple,
             textShadow: `0 0 20px ${NEON.purple}`,
-            boxShadow: `0 0 30px ${NEON.purple}25`,
+            boxShadow: `0 0 40px ${NEON.purple}30, inset 0 0 20px ${NEON.purple}10`,
           }}
+          whileHover={{ scale: 1.05, boxShadow: `0 0 60px ${NEON.purple}50` }}
         >
           ✦ The Collection ✦
-        </span>
+        </motion.span>
 
         <h2 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8">
-          <span className="block text-white">CHOOSE YOUR</span>
-          <span
+          <span className="block text-white" style={{ textShadow: `0 0 40px ${NEON.cyan}30` }}>
+            CHOOSE YOUR
+          </span>
+          <motion.span
             className="block mt-2"
             style={{
               background: `linear-gradient(135deg, ${NEON.gold}, #fff, ${NEON.gold})`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
+              filter: `drop-shadow(0 0 30px ${NEON.gold}60)`,
             }}
+            animate={{
+              filter: [
+                `drop-shadow(0 0 30px ${NEON.gold}60)`,
+                `drop-shadow(0 0 50px ${NEON.gold}80)`,
+                `drop-shadow(0 0 30px ${NEON.gold}60)`,
+              ],
+            }}
+            transition={{ duration: 3, repeat: Infinity }}
           >
             LEGEND
-          </span>
+          </motion.span>
         </h2>
 
         <p className="text-xl text-white/60 max-w-2xl mx-auto">
@@ -170,13 +242,17 @@ export function VehicleShowcaseSection({
         </p>
       </motion.div>
 
-      {/* Decorative line */}
-      <div
-        className="absolute top-[32%] left-0 right-0 h-[2px] z-0"
+      {/* Decorative neon line */}
+      <motion.div
+        className="absolute top-[30%] left-0 right-0 h-[2px] z-0"
         style={{
           background: `linear-gradient(90deg, transparent, ${NEON.purple}, ${NEON.cyan}, ${NEON.gold}, ${NEON.cyan}, ${NEON.purple}, transparent)`,
-          boxShadow: `0 0 20px ${NEON.purple}`,
+          boxShadow: `0 0 30px ${NEON.purple}`,
         }}
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.5 }}
       />
 
 
@@ -191,79 +267,107 @@ export function VehicleShowcaseSection({
               <motion.div
                 key={vehicle.id}
                 className="relative cursor-pointer group"
-                initial={{ opacity: 0, y: 60 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 80, rotateY: -20 }}
+                whileInView={{ opacity: 1, y: 0, rotateY: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{
-                  duration: 0.6,
-                  delay: index * 0.15,
-                  ease: 'easeOut',
+                  duration: 0.8,
+                  delay: index * 0.2,
+                  ease: [0.22, 1, 0.36, 1],
                 }}
                 onClick={() => handleVehicleSelect(vehicle)}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
+                style={{ perspective: '1000px' }}
               >
-                {/* Card glow - only on hover */}
-                <div
-                  className={`absolute -inset-3 rounded-[2rem] blur-xl transition-opacity duration-300 ${isHovered ? 'opacity-60' : 'opacity-0'}`}
+                {/* Card glow */}
+                <motion.div
+                  className="absolute -inset-4 rounded-[2rem] blur-2xl"
                   style={{ background: cardColor }}
+                  animate={{ opacity: isHovered ? 0.5 : 0 }}
+                  transition={{ duration: 0.3 }}
                 />
 
                 {/* Main card */}
-                <div
-                  className="relative rounded-3xl overflow-hidden transition-all duration-300"
+                <motion.div
+                  className="relative rounded-3xl overflow-hidden"
                   style={{
-                    background: 'rgba(0, 0, 0, 0.7)',
+                    background: 'rgba(5, 5, 20, 0.8)',
                     backdropFilter: 'blur(20px)',
                     border: `2px solid ${isHovered ? cardColor : cardColor + '40'}`,
                     boxShadow: isHovered
-                      ? `0 0 40px ${cardColor}40, 0 20px 40px rgba(0,0,0,0.4)`
-                      : `0 0 15px ${cardColor}15`,
-                    transform: isHovered ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)',
+                      ? `0 0 60px ${cardColor}50, 0 30px 60px rgba(0,0,0,0.5), inset 0 0 40px ${cardColor}10`
+                      : `0 0 20px ${cardColor}20`,
                   }}
+                  animate={{
+                    rotateX: isHovered ? -5 : 0,
+                    rotateY: isHovered ? 5 : 0,
+                    scale: isHovered ? 1.05 : 1,
+                    y: isHovered ? -10 : 0,
+                  }}
+                  transition={{ duration: 0.4 }}
                 >
+                  {/* Animated border */}
+                  <motion.div
+                    className="absolute inset-0 rounded-3xl pointer-events-none"
+                    style={{
+                      background: `linear-gradient(90deg, ${cardColor}, ${NEON.cyan}, ${cardColor})`,
+                      backgroundSize: '200% 100%',
+                      padding: '2px',
+                      WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                      WebkitMaskComposite: 'xor',
+                      maskComposite: 'exclude',
+                    }}
+                    animate={{
+                      backgroundPosition: isHovered ? ['0% 50%', '100% 50%'] : '0% 50%',
+                      opacity: isHovered ? 1 : 0,
+                    }}
+                    transition={{ duration: 1, repeat: isHovered ? Infinity : 0 }}
+                  />
+
                   {/* Corner accents */}
-                  <div className="absolute top-0 left-0 w-14 h-14 z-20">
-                    <div
-                      className="absolute top-0 left-0 w-full h-[2px]"
-                      style={{ background: cardColor, boxShadow: `0 0 10px ${cardColor}` }}
-                    />
-                    <div
-                      className="absolute top-0 left-0 h-full w-[2px]"
-                      style={{ background: cardColor, boxShadow: `0 0 10px ${cardColor}` }}
-                    />
+                  <div className="absolute top-0 left-0 w-16 h-16 z-20">
+                    <div className="absolute top-0 left-0 w-full h-[3px]" style={{ background: cardColor, boxShadow: `0 0 15px ${cardColor}` }} />
+                    <div className="absolute top-0 left-0 h-full w-[3px]" style={{ background: cardColor, boxShadow: `0 0 15px ${cardColor}` }} />
                   </div>
-                  <div className="absolute bottom-0 right-0 w-14 h-14 z-20">
-                    <div
-                      className="absolute bottom-0 right-0 w-full h-[2px]"
-                      style={{ background: cardColor, boxShadow: `0 0 10px ${cardColor}` }}
-                    />
-                    <div
-                      className="absolute bottom-0 right-0 h-full w-[2px]"
-                      style={{ background: cardColor, boxShadow: `0 0 10px ${cardColor}` }}
-                    />
+                  <div className="absolute bottom-0 right-0 w-16 h-16 z-20">
+                    <div className="absolute bottom-0 right-0 w-full h-[3px]" style={{ background: cardColor, boxShadow: `0 0 15px ${cardColor}` }} />
+                    <div className="absolute bottom-0 right-0 h-full w-[3px]" style={{ background: cardColor, boxShadow: `0 0 15px ${cardColor}` }} />
                   </div>
 
                   {/* Image section */}
-                  <div className="relative h-64 overflow-hidden">
-                    <div
-                      className={`absolute inset-0 transition-opacity duration-300 ${isHovered ? 'opacity-40' : 'opacity-20'}`}
+                  <div className="relative h-72 overflow-hidden">
+                    <motion.div
+                      className="absolute inset-0"
                       style={{
-                        background: `radial-gradient(ellipse at center, ${cardColor} 0%, transparent 70%)`,
+                        background: `radial-gradient(ellipse at center, ${cardColor}40 0%, transparent 70%)`,
                       }}
+                      animate={{ opacity: isHovered ? 0.8 : 0.3, scale: isHovered ? 1.2 : 1 }}
+                      transition={{ duration: 0.5 }}
                     />
-                    <div
-                      className="relative w-full h-full transition-transform duration-500"
-                      style={{ transform: isHovered ? 'scale(1.08)' : 'scale(1)' }}
+                    <motion.div
+                      className="relative w-full h-full"
+                      animate={{ scale: isHovered ? 1.1 : 1, y: isHovered ? -10 : 0 }}
+                      transition={{ duration: 0.5 }}
                     >
-                      <Image
-                        src={vehicle.src}
-                        alt={vehicle.alt}
-                        fill
-                        className="object-contain p-6"
-                        unoptimized
+                      <Image src={vehicle.src} alt={vehicle.alt} fill className="object-contain p-6" unoptimized />
+                    </motion.div>
+
+                    {/* Floating particles on hover */}
+                    {isHovered && [...Array(6)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute w-2 h-2 rounded-full"
+                        style={{
+                          background: cardColor,
+                          boxShadow: `0 0 10px ${cardColor}`,
+                          left: `${25 + i * 10}%`,
+                          top: '50%',
+                        }}
+                        animate={{ y: [0, -50, 0], opacity: [0, 1, 0], scale: [0, 1.5, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
                       />
-                    </div>
+                    ))}
                   </div>
 
 
@@ -271,38 +375,31 @@ export function VehicleShowcaseSection({
                   <div className="p-8">
                     <span
                       className="text-xs uppercase tracking-[0.3em] mb-3 block font-semibold"
-                      style={{ color: cardColor, textShadow: `0 0 10px ${cardColor}` }}
+                      style={{ color: cardColor, textShadow: `0 0 15px ${cardColor}` }}
                     >
                       {vehicle.specs.engine}
                     </span>
-
-                    <h3
-                      className="text-3xl font-black mb-3 text-white"
-                      style={{ textShadow: `0 0 20px ${cardColor}30` }}
-                    >
+                    <h3 className="text-3xl font-black mb-3 text-white" style={{ textShadow: `0 0 30px ${cardColor}40` }}>
                       {vehicle.title}
                     </h3>
-
-                    <p className="text-white/50 text-sm mb-6 line-clamp-2">
-                      {vehicle.tagline}
-                    </p>
+                    <p className="text-white/50 text-sm mb-6 line-clamp-2">{vehicle.tagline}</p>
 
                     {/* Stats row */}
                     <div className="flex gap-6 pt-4 border-t border-white/10">
                       <div className="text-center">
-                        <div className="text-2xl font-bold" style={{ color: NEON.purple }}>
+                        <div className="text-2xl font-bold" style={{ color: NEON.purple, textShadow: `0 0 15px ${NEON.purple}` }}>
                           {vehicle.specs.horsepower}
                         </div>
                         <div className="text-xs text-white/40 uppercase tracking-wider">HP</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold" style={{ color: NEON.cyan }}>
+                        <div className="text-2xl font-bold" style={{ color: NEON.cyan, textShadow: `0 0 15px ${NEON.cyan}` }}>
                           {vehicle.specs.acceleration}s
                         </div>
                         <div className="text-xs text-white/40 uppercase tracking-wider">0-100</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold" style={{ color: NEON.gold }}>
+                        <div className="text-2xl font-bold" style={{ color: NEON.gold, textShadow: `0 0 15px ${NEON.gold}` }}>
                           ${(vehicle.specs.price / 1000).toFixed(0)}K
                         </div>
                         <div className="text-xs text-white/40 uppercase tracking-wider">Price</div>
@@ -311,54 +408,47 @@ export function VehicleShowcaseSection({
                   </div>
 
                   {/* Hover overlay */}
-                  <div
-                    className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+                  <motion.div
+                    className="absolute inset-0 flex items-center justify-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: isHovered ? 1 : 0 }}
                     style={{ background: 'rgba(0, 0, 0, 0.85)' }}
                   >
                     <div className="text-center">
-                      <div
-                        className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center"
-                        style={{
-                          border: `2px solid ${cardColor}`,
-                          boxShadow: `0 0 25px ${cardColor}50`,
-                        }}
+                      <motion.div
+                        className="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center"
+                        style={{ border: `2px solid ${cardColor}`, boxShadow: `0 0 30px ${cardColor}50` }}
+                        animate={{ boxShadow: isHovered ? [`0 0 30px ${cardColor}50`, `0 0 50px ${cardColor}80`, `0 0 30px ${cardColor}50`] : `0 0 30px ${cardColor}50` }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
                       >
-                        <span className="text-2xl">🔍</span>
-                      </div>
+                        <span className="text-3xl">🔍</span>
+                      </motion.div>
                       <span
-                        className="px-6 py-2 rounded-full font-bold uppercase tracking-wider text-sm inline-block"
-                        style={{
-                          border: `2px solid ${NEON.gold}`,
-                          color: NEON.gold,
-                          boxShadow: `0 0 20px ${NEON.gold}30`,
-                        }}
+                        className="px-8 py-3 rounded-full font-bold uppercase tracking-wider text-sm inline-block"
+                        style={{ border: `2px solid ${NEON.gold}`, color: NEON.gold, boxShadow: `0 0 30px ${NEON.gold}40` }}
                       >
                         View Details
                       </span>
                     </div>
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
               </motion.div>
             );
           })}
         </div>
       </div>
 
-      {/* Bottom line */}
+      {/* Bottom neon line */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-[2px]"
+        className="absolute bottom-0 left-0 right-0 h-[3px]"
         style={{
           background: `linear-gradient(90deg, transparent, ${NEON.cyan}, ${NEON.gold}, ${NEON.cyan}, transparent)`,
-          boxShadow: `0 0 20px ${NEON.cyan}`,
+          boxShadow: `0 0 30px ${NEON.cyan}`,
         }}
       />
 
       {/* Modal */}
-      <VehicleDetailModal
-        vehicle={selectedVehicle}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
+      <VehicleDetailModal vehicle={selectedVehicle} isOpen={isModalOpen} onClose={handleCloseModal} />
     </section>
   );
 }
