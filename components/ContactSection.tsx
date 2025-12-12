@@ -45,7 +45,7 @@ export function ContactSection() {
       id="contact"
       className="relative min-h-screen py-32 px-6 overflow-hidden snap-start"
     >
-      {/* Background */}
+      {/* Background - static for performance */}
       <div className="absolute inset-0">
         <div
           className="absolute inset-0"
@@ -65,26 +65,25 @@ export function ContactSection() {
           }}
         />
 
-        {/* Animated orbs */}
-        <motion.div
-          className="absolute w-[600px] h-[600px] rounded-full blur-[150px]"
+        {/* Static orbs with CSS animation */}
+        <div
+          className="absolute w-[500px] h-[500px] rounded-full animate-pulse-slow"
           style={{
-            background: `radial-gradient(circle, ${NEON.cyan}30 0%, transparent 70%)`,
+            background: `radial-gradient(circle, ${NEON.cyan}25 0%, transparent 70%)`,
+            filter: 'blur(120px)',
             left: '20%',
             bottom: '10%',
           }}
-          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity }}
         />
-        <motion.div
-          className="absolute w-[500px] h-[500px] rounded-full blur-[120px]"
+        <div
+          className="absolute w-[400px] h-[400px] rounded-full animate-pulse-slow"
           style={{
-            background: `radial-gradient(circle, ${NEON.purple}30 0%, transparent 70%)`,
+            background: `radial-gradient(circle, ${NEON.purple}20 0%, transparent 70%)`,
+            filter: 'blur(100px)',
             right: '20%',
             bottom: '20%',
+            animationDelay: '4s',
           }}
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.4, 0.2, 0.4] }}
-          transition={{ duration: 10, repeat: Infinity }}
         />
       </div>
 
